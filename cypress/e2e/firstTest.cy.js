@@ -5,7 +5,7 @@ describe('Test with backend', () => {
   beforeEach('login to application', () => {
     cy.intercept({method: 'Get', path: '**/tags'}, {fixture: 'tags.json'});
 
-    cy.loginToApplication();
+    cy.loginToApplication()
 })
   
   it('should verify correct request and response', () => {
@@ -13,7 +13,7 @@ describe('Test with backend', () => {
     cy.intercept('POST', 'https://api.realworld.io/api/articles/')
       .as('postArticles');
 
-    cy.conteins('New Article')
+    cy.contains('New Article')
       .click();
     cy.findByPlaceholder('Article Title')
       .type('This is title');
@@ -26,13 +26,13 @@ describe('Test with backend', () => {
 
     cy.wait('@postArticles')
       .then(xhr => {
-        console.log(xhr);
-        expect(xhr.response.statusCode)
-          .to.equal(200);
-        expect(xhr.request.body.article.body)
-          .to.equal('This is a body of the article');
-        expect(xhr.response.body.article.description)
-          .to.equal('This is a description'); 
+        console.log(xhr)
+          expect(xhr.response.statusCode)
+            .to.equal(200);
+          expect(xhr.request.body.article.body)
+            .to.equal('This is a body of the article');
+          expect(xhr.response.body.article.description)
+            .to.equal('This is a description');
       });
   });
 
@@ -49,7 +49,7 @@ describe('Test with backend', () => {
       })
     }).as('postArticles');
 
-    cy.conteins('New Article')
+    cy.contains('New Article')
       .click();
     cy.findByPlaceholder('Article Title')
       .type('This is title');
@@ -118,7 +118,7 @@ describe('Test with backend', () => {
       .then(token => {
 
         cy.request({
-          url: 'https://api.realworld.io/api/articles/',
+          url: Cypress.env('apiUrl')+'/api/articles/',
           headers: { 'Authorization': 'Token ' +token },
           method: 'POST',
           body: bodyRequest
@@ -133,11 +133,11 @@ describe('Test with backend', () => {
           .first()
           .click();
         cy.get('.article-actions')
-          .contain('Delete Article')
+          .contains('Delete Article')
           .click();
 
         cy.request({
-          url: 'https://api.realworld.io/api/articles?limit=10&offset=0',
+          url: Cypress.env('apiUrl')+'/api/articles?limit=10&offset=0',
           headers: { 'Authorization': 'Token ' +token },
           method: 'GET',
         }).its('body').then( body => {
